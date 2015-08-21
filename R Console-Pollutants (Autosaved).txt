@@ -1,0 +1,57 @@
+
+R version 3.2.1 (2015-06-18) -- "World-Famous Astronaut"
+Copyright (C) 2015 The R Foundation for Statistical Computing
+Platform: x86_64-apple-darwin13.4.0 (64-bit)
+
+R is free software and comes with ABSOLUTELY NO WARRANTY.
+You are welcome to redistribute it under certain conditions.
+Type 'license()' or 'licence()' for distribution details.
+
+  Natural language support but running in an English locale
+
+R is a collaborative project with many contributors.
+Type 'contributors()' for more information and
+'citation()' on how to cite R or R packages in publications.
+
+Type 'demo()' for some demos, 'help()' for on-line help, or
+'help.start()' for an HTML browser interface to help.
+Type 'q()' to quit R.
+
+During startup - Warning messages:
+1: Setting LC_CTYPE failed, using "C" 
+2: Setting LC_COLLATE failed, using "C" 
+3: Setting LC_TIME failed, using "C" 
+4: Setting LC_MESSAGES failed, using "C" 
+5: Setting LC_MONETARY failed, using "C" 
+[R.app GUI 1.66 (6956) x86_64-apple-darwin13.4.0]
+
+WARNING: You're using a non-UTF8 locale, therefore only ASCII characters will work.
+Please read R for Mac OS X FAQ (see Help) section 9 and adjust your system preferences accordingly.
+[History restored from /Users/praneetdutta/.Rapp.history]
+
+> climate = read.csv("climate_change.csv")
+training = subset(climate, Year <= 2006)
+testing = subset(climate, Year > 2006)
+
+fit = lm(Temp ~ . - Year - Month, training)
+summary(fit)
+
+cor(training)[,6,drop=FALSE]
+cor(training)[,7,drop=FALSE]
+
+fit = lm(Temp ~ MEI + TSI + Aerosols + N2O, training)
+summary(fit)
+
+stepfit = step(lm(Temp ~ . - Year - Month, training))
+summary(stepfit)
+summary(lm(Temp ~ . - Year - Month, training))
+
+p = predict(stepfit, testing)
+
+TSS = with(testing, sum((Temp-mean(training$Temp))**2)) # not sure why we use the training mean
+RSS = with(testing, sum((Temp-p)**2))
+R2  = 1 - RSS/TSS
+R2
+
+R2(p, testing$Temp, formula="traditional")
+
