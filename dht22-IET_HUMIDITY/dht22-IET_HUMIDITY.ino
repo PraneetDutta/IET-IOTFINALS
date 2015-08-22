@@ -1,26 +1,18 @@
-//
-//    FILE: dht_test.ino
-//  AUTHOR: Rob Tillaart
-// VERSION: 0.1.07
-// PURPOSE: DHT Temperature & Humidity Sensor library for Arduino
-//     URL: http://arduino.cc/playground/Main/DHTLib
-//
-// Released to the public domain
-//
+
 
 #include <dht.h>
 dht DHT;
-#define DHT22_PIN 9
-#define DHT11_PIN 5
+
+#define DHT11_PIN 6 //Pin Connection to the Arduino Uno
 
 void setup()
 {
-  Serial.begin(115200);
-  Serial.println("DHT TEST PROGRAM ");
+  Serial.begin(115200);                  //Setting Up the Baud Rate
+  Serial.println("IOT Monitoring -Humidity and Temperature ");
   Serial.print("LIBRARY VERSION: ");
   Serial.println(DHT_LIB_VERSION);
   Serial.println();
-  Serial.println("Type,\tstatus,\tHumidity (%),\tTemperature (C)");
+  Serial.println("Type,\tstatus,\tHumidity-Vellore (%),\tTemperature -Vellore(C)");
 }
 
 void loop()
