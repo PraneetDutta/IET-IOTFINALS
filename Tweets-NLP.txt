@@ -1,0 +1,69 @@
+
+R version 3.2.1 (2015-06-18) -- "World-Famous Astronaut"
+Copyright (C) 2015 The R Foundation for Statistical Computing
+Platform: x86_64-apple-darwin13.4.0 (64-bit)
+
+R is free software and comes with ABSOLUTELY NO WARRANTY.
+You are welcome to redistribute it under certain conditions.
+Type 'license()' or 'licence()' for distribution details.
+
+  Natural language support but running in an English locale
+
+R is a collaborative project with many contributors.
+Type 'contributors()' for more information and
+'citation()' on how to cite R or R packages in publications.
+
+Type 'demo()' for some demos, 'help()' for on-line help, or
+'help.start()' for an HTML browser interface to help.
+Type 'q()' to quit R.
+
+During startup - Warning messages:
+1: Setting LC_CTYPE failed, using "C" 
+2: Setting LC_COLLATE failed, using "C" 
+3: Setting LC_TIME failed, using "C" 
+4: Setting LC_MESSAGES failed, using "C" 
+5: Setting LC_MONETARY failed, using "C" 
+[R.app GUI 1.66 (6956) x86_64-apple-darwin13.4.0]
+
+WARNING: You're using a non-UTF8 locale, therefore only ASCII characters will work.
+Please read R for Mac OS X FAQ (see Help) section 9 and adjust your system preferences accordingly.
+[Workspace restored from /Users/praneetdutta/.RData]
+[History restored from /Users/praneetdutta/.Rapp.history]
+
+> tweetIOT = read.csv("tweets.csv", stringsAsFactors=FALSE)
+tweetIOT$Negative = as.factor(tweets$Avg <= -1)
+corpus = Corpus(VectorSource(tweets$Tweet))
+corpus = tm_map(corpus, tolower)
+corpus = tm_map(corpus, PlainTextDocument)
+corpus = tm_map(corpus, removePunctuation)
+corpus = tm_map(corpus, removeWords, c("Air Pollution", stopwords("english")))
+corpus = tm_map(corpus, stemDocument)
+
+frequencies = DocumentTermMatrix(corpus)
+findFreqTerms(frequencies, lowfreq=20)
+sparse = removeSparseTerms(frequencies, 0.995)
+tweetsSparse = as.data.frame(as.matrix(sparse))
+colnames(tweetsSparse) = make.names(colnames(tweetsSparse))
+tweetsSparse$Negative = tweetIOT$Negative
+set.seed(123)
+splt = sample.split(tweetsSparse$Negative, SplitRatio=0.7)
+trainSparse = tweetsSparse[splt,]
+testSparse = tweetsSparse[!splt,]
+
+findFreqTerms(frequencies, lowfreq=100)
+
+tweetCART = rpart(Negative ~ ., data=trainSparse, method="class")
+prp(tweetCART)
+predictCART = predict(tweetCART, testSparse, type="class")
+c = table(testSparse$Negative, predictCART)
+(c[1,1]+c[2,2])/nrow(testSparse)
+set.seed(123)
+tweetRF = randomForest(Negative ~ ., data=trainSparse, method="class")
+predictRF = predict(tweetRF, testSparse, type="class")
+c = table(testSparse$Negative, predictRF)
+(c[1,1]+c[2,2])/nrow(testSparse)
+
+tweetLog = glm(Negative ~ ., data=trainSparse, family="binomial")
+predictions = predict(tweetLog, newdata=testSparse, type="response")
+c = table(testSparse$Negative, predictions>0.5)
+(c[1,1]+c[2,2])/nrow(testSparse)
