@@ -45,7 +45,7 @@ delay(1000);
 mySerial.println(message);  
 mySerial.print("\r");  
 delay(1000);  
-mySerial.println((char)26);  
+mySerial.println((char)26);   
 mySerial.println();  }  
 
 
