@@ -52,6 +52,6 @@ mySerial.println();  }
 void ShowSerialData(){  
 
 while(mySerial.available()!=0)  
- Serial.write(mySerial.read());}  
+ Serial.write(mySerial.read());}
 
 
