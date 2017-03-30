@@ -1,0 +1,8 @@
+title: Iet-iotfinals
+description: Urban Pollution Monitoring Using the Internet of Things
+google_analytics: 
+show_downloads: true
+theme: jekyll-theme-midnight
+
+gems:
+  - jekyll-mentions
